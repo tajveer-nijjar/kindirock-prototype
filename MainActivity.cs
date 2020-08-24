@@ -12,18 +12,25 @@ namespace GridLayoutDemo
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        private GridLayout _gridLayoutMobile;
+        //private GridLayout  _gridLayoutTablet;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            //Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            //SetSupportActionBar(toolbar);
+            _gridLayoutMobile = FindViewById<GridLayout>(Resource.Id.gridLayoutMobile);
 
-            //FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            //fab.Click += FabOnClick;
+            var surfaceOrientation = WindowManager.DefaultDisplay.Rotation;
+            if (surfaceOrientation == SurfaceOrientation.Rotation90)
+            {
+                _gridLayoutMobile.ColumnCount = 2;
+            }
         }
+
+       
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -42,18 +49,11 @@ namespace GridLayoutDemo
             return base.OnOptionsItemSelected(item);
         }
 
-        private void FabOnClick(object sender, EventArgs eventArgs)
-        {
-            View view = (View) sender;
-            Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-                .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
-        }
-
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-	}
+    }
 }
