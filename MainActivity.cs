@@ -17,6 +17,7 @@ namespace GridLayoutDemo
     public class MainActivity : AppCompatActivity
     {
         private List<int> _data;
+        public event EventHandler<RecyclerAdapterClickEventArgs> ItemClick;
 
         public MainActivity()
         {
@@ -29,6 +30,7 @@ namespace GridLayoutDemo
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
+            
 
             // Get our button from the layout resource,
             // and attach an event to it
@@ -41,10 +43,12 @@ namespace GridLayoutDemo
             recyclerView.HasFixedSize = true;
             var adapter = new RecyclerAdapter(_data);
             recyclerView.SetAdapter(adapter);
+            adapter.ItemClick += (e, args) =>
+            {
+                Toast.MakeText(this, args.Position.ToString(), ToastLength.Short).Show();
+            };
 
             var surfaceOrientation = WindowManager.DefaultDisplay.Rotation;
-
-
 
             if (surfaceOrientation == SurfaceOrientation.Rotation90 || surfaceOrientation == SurfaceOrientation.Rotation270)
             {
@@ -60,8 +64,6 @@ namespace GridLayoutDemo
                 gridLayoutManager.SpanCount = spanCount;
                 adapter.NotifyDataSetChanged();
             }
-
-
         }
 
         private bool IsTablet(Context context)
