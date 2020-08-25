@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -15,8 +16,6 @@ namespace GridLayoutDemo
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        private GridLayout _gridLayoutMobile;
-        private GridLayout _gridLayoutTablet;
         private List<int> _data;
 
         public MainActivity()
@@ -30,20 +29,36 @@ namespace GridLayoutDemo
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            _gridLayoutMobile = FindViewById<GridLayout>(Resource.Id.gridLayoutMobile);
-            _gridLayoutTablet = FindViewById<GridLayout>(Resource.Id.gridLayoutTablet);
+
+            // Get our button from the layout resource,
+            // and attach an event to it
+            RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
+
+            var spanCount = IsTablet(this) ? 2 : 1;
+            var gridLayoutManager = new GridLayoutManager(this, spanCount: spanCount);
+            recyclerView.SetLayoutManager(gridLayoutManager);
+
+            recyclerView.HasFixedSize = true;
+            var adapter = new RecyclerAdapter(_data);
+            recyclerView.SetAdapter(adapter);
 
             var surfaceOrientation = WindowManager.DefaultDisplay.Rotation;
+
+
+
             if (surfaceOrientation == SurfaceOrientation.Rotation90 || surfaceOrientation == SurfaceOrientation.Rotation270)
             {
                 if (IsTablet(this))
                 {
-                    _gridLayoutTablet.ColumnCount = 3;
+                    spanCount = 3;
                 }
                 else
                 {
-                    _gridLayoutMobile.ColumnCount = 2;
+                    spanCount = 2;
                 }
+
+                gridLayoutManager.SpanCount = spanCount;
+                adapter.NotifyDataSetChanged();
             }
 
 
